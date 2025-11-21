@@ -1,0 +1,44 @@
+import os
+import subprocess
+
+def clone_repository(repo_url, clone_dir="project"):
+    if not os.path.exists(clone_dir):
+        subprocess.run(["git", "clone", repo_url, clone_dir])
+    else:
+        print("Repository already exists.")
+
+def install_dependencies(requirements_file="requirements.txt"):
+    if os.path.exists(requirements_file):
+        subprocess.run(["pip", "install", "-r", requirements_file"])
+    else:
+        print("No requirements.txt file found.")
+
+def run_tests(test_command="pytest"):
+    result = subprocess.run(test_command, shell=True)
+    return result.returncode == 0
+
+def build_project(build_command="python setup.py build"):
+    result = subprocess.run(build_command, shell=True)
+    return result.returncode == 0
+
+def main():
+    repo_url = "https://github.com/your-username/your-repo.git"
+    clone_directory = "project"
+
+    clone_repository(repo_url, clone_directory)
+
+    os.chdir(clone_directory)
+
+    install_dependencies()
+
+    if run_tests():
+        print("Tests passed. Proceeding to build.")
+        if build_project():
+            print("Build successful.")
+        else:
+            print("Build failed.")
+    else:
+        print("Tests failed. Build aborted.")
+
+if __name__ == "__main__":
+    main()
